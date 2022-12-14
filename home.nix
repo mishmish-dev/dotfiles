@@ -29,6 +29,8 @@
     (nerdfonts.override { fonts = [ "FiraCode" ]; })
     jq
     yq
+    sshuttle
+    kaf
   ];
 
   fonts.fontconfig.enable = true;
