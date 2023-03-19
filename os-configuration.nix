@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports =
@@ -31,6 +31,9 @@
   networking.networkmanager.enable = true;
   networking.networkmanager.dns = "systemd-resolved";
   services.resolved.enable = true;
+
+  networking.wireless.iwd.enable = true;
+  networking.networkmanager.wifi.backend = "iwd";
 
   # Set your time zone.
   time.timeZone = "Asia/Jerusalem";
@@ -72,7 +75,7 @@
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
+  services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.mishmish = {
@@ -80,6 +83,13 @@
     description = "Mishmish";
     extraGroups = [ "networkmanager" "wheel" ];
   };
+
+  users.users.openvpn = {
+      isSystemUser = lib.mkForce true;
+      description = "Openvpn user";
+    };
+  users.users.openvpn.group = "openvpn";
+  users.groups.openvpn = {};
 
   # Enable automatic login for the user.
   services.xserver.displayManager.autoLogin.enable = true;
@@ -90,6 +100,10 @@
 
   environment.systemPackages = with pkgs; [
     sqlite  # for command-not-found
+    openvpn3
+    binutils-unwrapped-all-targets
+    plasma-nm
+    glibc
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -130,8 +144,16 @@
   services.fprintd.tod.driver = pkgs.libfprint-2-tod1-vfs0090;
 
   hardware.bluetooth.enable = true;
+  
+  hardware.firmware = [ pkgs.linux-firmware ];
+  boot.extraModulePackages = [ config.boot.kernelPackages.rtw89 ];
 
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.fish;
   environment.shells = [ pkgs.bash pkgs.fish ];
+
+  nix.extraOptions = ''
+    keep-outputs = true
+    keep-derivations = true
+  '';
 }

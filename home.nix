@@ -25,12 +25,20 @@
     wget
     tmux
     kitty
-    openvpn3
     (nerdfonts.override { fonts = [ "FiraCode" ]; })
     jq
     yq
     sshuttle
     kaf
+    kubectl
+    teams
+    rustup
+    mysql80
+    gcc
+    xclip
+    transmission
+    deluge
+    vlc
   ];
 
   fonts.fontconfig.enable = true;
